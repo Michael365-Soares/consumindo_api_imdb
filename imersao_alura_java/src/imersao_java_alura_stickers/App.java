@@ -15,8 +15,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import imersao_java_alura_stickers.model.Filme;
 
 public class App {
+	public static List<Filme> filmesList=new ArrayList<>();
     public static void main(String[] args) throws IOException, InterruptedException{
-        String body;
+    	String body;
 		//imdb-api.com/en/API/Top250Movies/K_0ojt0yvm
     	//realizar uma conexão http e buscar os top 250 filmes imdb
     	String enderecoApi="https://api.mocki.io/v2/549a5d8b";
@@ -47,7 +48,6 @@ public class App {
     		String json=obj.writerWithView(Object.class).writeValueAsString(objeto);
     		lista.add(json);
     	}
-    	List<Filme> filmesList=new ArrayList<>();
     	for(String json:lista) {
     		filmesList.add(obj.readerWithView(Object.class).forType(Filme.class).readValue(json));
     	}
