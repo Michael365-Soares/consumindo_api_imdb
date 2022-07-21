@@ -1,6 +1,10 @@
 package imersao_java_alura_stickers;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
+import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -13,6 +17,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import imersao_java_alura_stickers.model.Filme;
+import imersao_java_alura_stickers.model.GeradorDeFiguras;
 
 public class App {
 	public static List<Filme> filmesList=new ArrayList<>();
@@ -52,6 +57,13 @@ public class App {
     		filmesList.add(obj.readerWithView(Object.class).forType(Filme.class).readValue(json));
     	}
     	//exibir e manipular os dados
-    	filmesList.forEach(System.out::println);
+    	GeradorDeFiguras gerador=new GeradorDeFiguras();
+    	for(Filme filme:filmesList) {
+    		System.out.println(filme);
+    		String titulo=filme.getTitle().replace(':',' ').trim()+".png";
+    		String url=filme.getImage();
+    		InputStream stream=new URL(url).openStream();
+    		gerador.gerarFigura(stream,titulo);
+    	}
 	}
 }
