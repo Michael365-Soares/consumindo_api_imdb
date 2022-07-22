@@ -1,9 +1,6 @@
 package imersao_java_alura_stickers;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -16,45 +13,53 @@ import java.util.Map;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import imersao_java_alura_stickers.model.ConversoraJson;
 import imersao_java_alura_stickers.model.Filme;
 import imersao_java_alura_stickers.model.GeradorDeFiguras;
+import imersao_java_alura_stickers.model.ServicoHttp;
 
 public class App {
+	//Lista responsável por armazenar os dados do tipo Json convertidos para objetos do tipo filme
 	public static List<Filme> filmesList=new ArrayList<>();
     public static void main(String[] args) throws IOException, InterruptedException{
+    	//Vriável responsável por armazenar o corpo da requisição vinda do request
     	String body;
-		//imdb-api.com/en/API/Top250Movies/K_0ojt0yvm
-    	//realizar uma conexão http e buscar os top 250 filmes imdb
+    	//endereço da api responsável por trazer os dados
     	String enderecoApi="https://api.mocki.io/v2/549a5d8b";
-    	//http://www.omdbapi.com/?t=Game%20of%20Thrones&Season=1&Episode=1
-    	URI createURI=URI.create(enderecoApi);
-    	HttpClient cliente=HttpClient.newHttpClient();
-    	HttpRequest request=HttpRequest.newBuilder(createURI).GET().build();
-    	
-		HttpResponse<String> resposta=cliente.send(request,BodyHandlers.ofString());
+    	//Criação de um objeto resposável por fornecer os serviços necessários para conexão com a api
+    	ServicoHttp servicoHttp=new ServicoHttp(enderecoApi);
+    	//Pegando um objeto HttpClient por meio do método getCliente() da classe ServivoHttp
+    	HttpClient cliente=servicoHttp.getCliente();
+    	/*Criando um objeto HttpRequest utilizando o método getRequest da classe ServicoHttp que recebe
+    	 * como parâmetro uma URI fornecido pelo método getUri() também fornecido pela classe*/
+    	HttpRequest request=servicoHttp.getRequest(servicoHttp.getUri());
+    	/*Pegando a resposta da requisição por meio do objeto cliente chamando o método send()
+    	 * e passando como parâmetros o objeto request e a forma que será retornada a resposta*/
+    	HttpResponse<String> resposta=cliente.send(request,BodyHandlers.ofString());
 		body=resposta.body();
-	    //System.out.println(body);
-			
     	//pegar somente os dados necessários(título,poster e classificação)
 		//Instância de um ObjectMapper para manipulação de um Json
-    	ObjectMapper obj=new ObjectMapper();
+		ConversoraJson conversor=new ConversoraJson();
     	//Criando um TypeReference para extração de formato Json para um Collection do tipo Map
-    	TypeReference<Map<Object,Object>> typeRef=new TypeReference<>() {};
     	//Extraindo Json para a Collection Map
-    	Map<Object,Object> filmes=obj.readValue(body,typeRef);
-    	//System.out.println(filmes.get("items"));
+    	Map<Object,Object> filmes=conversor.getMapper().readValue(body,conversor.getMapa());
     	//Acessando o valor por meio da CHAVE=itens da colecao para acessar os valores em formato de Objetos Json e
     	// converte-los para uma String....
-    	String listaArray=obj.writeValueAsString(filmes.get("items"));
+    	String listaArray=conversor.getMapper().writeValueAsString(filmes.get("items"));;
         //Convertendo a String listaArray em Objetos e adicionando a uma list
-    	List<Object> listFilmes=obj.readValue(listaArray,new TypeReference<List<Object>>() {});
+    	List<Object> listFilmes=conversor.getMapper().readValue(listaArray,new TypeReference<List<Object>>(){});
+    	/*Criação de uma  lista para armazenar temporariamente objetos do tipo Object convertidos para String em
+    	 * formato Json */
     	List<String> lista=new ArrayList<>();
     	for(Object objeto:listFilmes) {
-    		String json=obj.writerWithView(Object.class).writeValueAsString(objeto);
+    		//Convertendo um Object em String no formato Json
+    		String json=conversor.getMapper().writerWithView(Object.class).writeValueAsString(objeto);
+    		//Adicionando a String convertida a uma Lista
     		lista.add(json);
     	}
+    	//Convertendo a String Json em Objetos do tipo filme
     	for(String json:lista) {
-    		filmesList.add(obj.readerWithView(Object.class).forType(Filme.class).readValue(json));
+    		filmesList.add(conversor.getMapper().readerWithView(Object.class).forType(Filme.class).readValue(json));
     	}
     	//exibir e manipular os dados
     	GeradorDeFiguras gerador=new GeradorDeFiguras();
