@@ -4,7 +4,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import imersao_java_alura_stickers.model.ConversoraJson;
 import imersao_java_alura_stickers.model.Filme;
