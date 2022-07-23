@@ -2,7 +2,7 @@ package imersao_java_alura_stickers.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)	 	 	 
-public class Filme {
+public class Filme implements ExtracaoDeConteudo {
 	
     private String title;
     private String image;
