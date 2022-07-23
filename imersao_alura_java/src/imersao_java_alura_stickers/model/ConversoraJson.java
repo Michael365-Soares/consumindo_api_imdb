@@ -11,35 +11,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ConversoraJson {
-    private ObjectMapper mapper=new ObjectMapper();
     private String json;
-    
-    public ConversoraJson() {}
-    
-	public ConversoraJson(String json) {
-		super();
-		this.json = json;
-	}
-    
-    public String getJson() {
-		return json;
-	}
-
-	public void setJson(String json) {
-		this.json = json;
-	}
-
-	public ObjectMapper getMapper() {
-		return mapper;
-	}
-
-	public TypeReference<Map<Object,Object>> getMapa(){
-    	return new TypeReference<Map<Object,Object>>() {};
-    }
-	
-	public TypeReference<List<Object>> getList(){
-		return new TypeReference<List<Object>>() {};
-	}
 
      public <T extends ExtracaoDeConteudo> List<T> retornaConteudoImdb() throws JsonParseException,
      JsonMappingException, IOException{
