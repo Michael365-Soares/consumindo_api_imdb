@@ -12,6 +12,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ConversoraJson {
     private String json;
+    
+    public ConversoraJson(String corpoDaResposta) {
+    	this.json=corpoDaResposta;
+    }
 
      public <T extends ExtracaoDeConteudo> List<T> retornaConteudoImdb() throws JsonParseException,
      JsonMappingException, IOException{
